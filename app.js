@@ -17,6 +17,11 @@ app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Methods", "OPTIONS,POST,GET,DELETE,PUT");
     next();
   }); 
+  
+
+//files estaticas
+app.use(express.static('public/uploads'))
+
 
 // Para poder rellenar el req.body
 app.use(express.json());

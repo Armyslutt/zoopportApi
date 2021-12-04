@@ -3,18 +3,7 @@ const Animal = require('../../database/models/Animal');
 const TipoAnimal = require('../../database/models/TipoAnimal');
 const Enfermedad = require('../../database/models/Enfermedad');
 const Tratamiento = require('../../database/models/Tratamiento');
-const multer = require('multer');
-
-const storage = multer.diskStorage({
-    destination: function(req, file, cb) {
-        cb(null, './uploads');
-    },
-    filename: function(req, file, cb){
-        cb(null, Date.now() + file.originalname)
-    }
-})
-
-const upload = multer({ storage: storage})
+const Fotografia = require('../../database/models/Fotografia');
 
 //consultar todos los Animales
 router.get('/', async(req, res) => {
@@ -31,6 +20,9 @@ router.get('/', async(req, res) => {
         {
             model: Tratamiento,
             attributes:['nombreTratamiento']
+        },{
+            model: Fotografia,
+            attributes:['file']
         }],
     })
     res.json(animal);
@@ -53,6 +45,10 @@ router.get('/adoptados', async(req, res) => {
         {
             model: Tratamiento,
             attributes:['nombreTratamiento']
+        },
+        {
+            model: Fotografium,
+            attributes:['file']
         }],
     });
     
@@ -76,6 +72,10 @@ router.get('/enTratamiento', async(req, res) => {
         {
             model: Tratamiento,
             attributes:['nombreTratamiento']
+        },
+        {
+            model: Fotografia,
+            attributes:['file']
         }],
     });
      res.json(animal);
@@ -98,6 +98,10 @@ router.get('/enProcesoAdopcion', async(req, res) => {
             model: Tratamiento,
             attributes:['nombreTratamiento']
         },
+        {
+            model: Fotografia,
+            attributes:['file']
+        }
         ],
         
     });
@@ -105,8 +109,7 @@ router.get('/enProcesoAdopcion', async(req, res) => {
 });
 
 // CREATE 
-router.post('/nuevo', upload.single('fotografia') , async (req, res) => {
-   console.log(req.file)
+router.post('/nuevo', async (req, res) => {
    const animal = await Animal.create({
        nombreAnimal: req.body.nombreAnimal,
        edad: req.body.edad,
@@ -114,10 +117,10 @@ router.post('/nuevo', upload.single('fotografia') , async (req, res) => {
        motivoLlegada: req.body.motivoLlegada,
        genero: req.body.genero,
        estadoAnimal: "en tratamiento",
-       fotografia: req.file,
        idTipoAnimal_FK: req.body.idTipoAnimal_FK,
        idEnfermedad_FK: req.body.idEnfermedad_FK,
        idTratamiento_FK: req.body.idTratamiento_FK,
+       idFotografia_FK: req.body.idFotografia_FK
 
    }).catch(err=>{
        res.json({err:"error al crear el Animal", detallesError:err.errors[0]});
@@ -127,7 +130,7 @@ router.post('/nuevo', upload.single('fotografia') , async (req, res) => {
 });
 
 // UPDATE
-router.put('/actualizar/:idAnimal',upload.single('fotografia'), async(req, res) => {
+router.put('/actualizar/:idAnimal', async(req, res) => {
     const animal = await Animal.update({
         nombreAnimal: req.body.nombreAnimal,
         edad: req.body.edad,
@@ -135,10 +138,10 @@ router.put('/actualizar/:idAnimal',upload.single('fotografia'), async(req, res) 
         motivoLlegada: req.body.motivoLlegada,
         genero: req.body.genero,
         estadoAnimal: req.body.estadoAnimal,
-        fotografia: req.file,
         idTipoAnimal_FK: req.body.idTipoAnimal_FK,
         idEnfermedad_FK: req.body.idEnfermedad_FK,
         idTratamiento_FK: req.body.idTratamiento_FK,
+        idFotografia_FK: req.body.idFotografia_FK
     },{
         where: { idAnimal: req.params.idAnimal }
     });

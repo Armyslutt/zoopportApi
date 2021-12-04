@@ -3,6 +3,7 @@ const sequelize = require('../db');
 
 const Usuario = require('./usuario');
 const Animal = require('./animal');
+const DocumentoSolicitud = require('./DocumentoSolicitud');
 
 class SolicitudAdopcion extends Model {}
 SolicitudAdopcion.init({
@@ -20,8 +21,8 @@ SolicitudAdopcion.init({
         type: DataTypes.DATEONLY,
         allowNull: false
     },
-    documentoSolicitud:{
-        type: DataTypes.BLOB,
+    idDocumentoSolicitud_FK:{
+        type: DataTypes.INTEGER,
         allowNull: false
     },
     idUsuario_FK: {
@@ -48,5 +49,9 @@ Usuario.hasMany(SolicitudAdopcion,{ foreignKey: 'idUsuario_FK'});
 //Relacion de 1:M con la tabla de Animal
 SolicitudAdopcion.belongsTo(Animal,{ foreignKey: 'idAnimal_FK'});
 Animal.hasMany(SolicitudAdopcion,{ foreignKey: 'idAnimal_FK'});
+
+//Relacion de 1:M con la tabla de documento
+SolicitudAdopcion.belongsTo(DocumentoSolicitud,{ foreignKey: 'idDocumentoSolicitud_FK'});
+DocumentoSolicitud.hasMany(SolicitudAdopcion,{ foreignKey: 'idDocumentoSolicitud_FK'});
 
 module.exports = SolicitudAdopcion;

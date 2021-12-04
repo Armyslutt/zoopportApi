@@ -4,6 +4,7 @@ const sequelize = require('../db');
 const TipoAnimal = require('./TipoAnimal');
 const Enfermedad = require('./Enfermedad');
 const Tratamiento = require('./Tratamiento');
+const Fotografia = require('./Fotografia');
 
 class Animal extends Model {}
 Animal.init({
@@ -56,10 +57,10 @@ Animal.init({
         type: DataTypes.INTEGER,
         allowNull: false
     },
-    fotografia: {
-        type: DataTypes.BLOB('long'),
+    idFotografia_FK: {
+        type: DataTypes.INTEGER,
         allowNull: false
-    }
+    },
 }, {
     sequelize,
     modelName: "Animal",
@@ -78,5 +79,9 @@ Tratamiento.hasMany(Animal,{ foreignKey: 'idTratamiento_FK'});
 //Relacion de 1:M con la tabla de TipoAnimal
 Animal.belongsTo(TipoAnimal,{ foreignKey: 'idTipoAnimal_FK'});
 TipoAnimal.hasMany(Animal,{ foreignKey: 'idTipoAnimal_FK'});
+
+//Relacion de 1:M con la tabla de Fotografia
+Animal.belongsTo(Fotografia,{ foreignKey: 'idFotografia_FK'});
+Fotografia.hasMany(Animal,{ foreignKey: 'idFotografia_FK'});
 
 module.exports = Animal;

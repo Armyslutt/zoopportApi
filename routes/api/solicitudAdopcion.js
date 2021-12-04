@@ -3,16 +3,8 @@ const SolicitudAdopcion = require('../../database/models/SolicitudAdopcion');
 const Usuario = require('../../database/models/Usuario');
 const Animal = require('../../database/models/Animal');
 const multer = require('multer');
+const DocumentoSolicitud = require('../../database/models/DocumentoSolicitud');
 
-const storage = multer.diskStorage({
-    destination: function(req, file, cb) {
-        cb(null,'./uploads/');
-    },
-    filename: function(req, file, cb){
-        cb(null, Date.now() + file.originalname)
-    }
-})
-const upload = multer({ storage: storage })
 
 //consultar todas las pendientes
 router.get('/', async(req, res) => {
@@ -27,6 +19,9 @@ router.get('/', async(req, res) => {
         {
             model: Animal,
             attributes: ['nombreAnimal']
+        },{
+            model: DocumentoSolicitud,
+            attributes: ['file']
         }],
     });
     
@@ -47,6 +42,10 @@ router.get('/rechazadas', async(req, res) => {
             model: Animal,
             attributes: ['nombreAnimal']
         },
+        {
+            model: DocumentoSolicitud,
+            attributes: ['file']
+        }
         ]
     });
     
@@ -68,6 +67,10 @@ router.get('/aceptadas', async(req, res) => {
             model: Animal,
             attributes: ['nombreAnimal']
         },
+        {
+            model: DocumentoSolicitud,
+            attributes: ['file']
+        }
         ]
     });
     
@@ -76,13 +79,12 @@ router.get('/aceptadas', async(req, res) => {
 
 
 // CREATE 
-router.post('/nueva', upload.single('documentoSolicitud') , async (req, res) => {
-    console.log(req.file)
+router.post('/nueva', async (req, res) => {
     const newSolicitud = await SolicitudAdopcion.create({
 
         estadoSolicitudAdopcion: req.body.estadoSolicitudAdopcion,
         fechaSolicitud: req.body.fechaSolicitud,
-        documentoSolicitud: req.file,
+        idDocumentoSolicitud_FK: req.idDocumentoSolicitud_FK,
         idUsuario_FK: req.body.idUsuario_FK,
         idAnimal_FK: req.body.idAnimal_FK,
     
@@ -98,8 +100,9 @@ router.put('/actualizar/:idSolicitudAdopcion', async(req, res) => {
     const updatedSolicitud = await SolicitudAdopcion.update({
         estadoSolicitudAdopcion: req.body.estadoSolicitudAdopcion,
         fechaSolicitud: req.body.fechaSolicitud,
+        idDocumentoSolicitud_FK: req.idDocumentoSolicitud_FK,
         idUsuario_FK: req.body.idUsuario_FK,
-        idAnimal_FK: req.body.idAnimal_FK
+        idAnimal_FK: req.body.idAnimal_FK,
     },{
         where: { idSolicitudAdopcion: req.params.idSolicitudAdopcion }
     });
